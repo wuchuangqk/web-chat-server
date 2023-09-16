@@ -23,12 +23,60 @@ const sendToOthers = (self, data) => {
 
 const handleMessage = (ws, msg) => {
   // console.log('ws message:', msg, typeof msg);
-  const { type } = JSON.parse(msg)
+  if (typeof msg === 'object') {
+    arrayBufferMessage(ws, msg)
+  } else if (typeof msg === 'string') {
+    textMessage(ws, msg)
+  }
+}
+
+const textMessage = (ws, msg) => {
+  const { type, data } = JSON.parse(msg)
   switch (type) {
     case 'message':
       sendToOthers(ws, msg)
       break
+    // 发送方握手
+    case 'offer':
+      onOffer(data)
+      break
+    // 接收方回应
+    case 'answer':
+      onAnswer(data)
+      break
   }
+}
+
+// 发送方通知接收方
+const onOffer = (_data) => {
+  const { data, user } = _data
+  const receiveClient = getClientById(data.receive)
+  if (!receiveClient) return
+  receiveClient.ws.send(JSON.stringify({
+    type: 'receiveOffer',
+    data: {
+      sender: user.id, // 发送方
+      description: data.description, // 发送方的offer
+    }
+  }))
+}
+
+// 接收方回应发送方
+// 让对方接收自己的answer
+const onAnswer = (_data) => {
+  const { data } = _data
+  const senderClient = getClientById(data.sender)
+  if (!senderClient) return
+  senderClient.ws.send(JSON.stringify({
+    type: 'receiveAnswer',
+    data: {
+      description: data.description, // 接收方的answer
+    }
+  }))
+}
+
+const arrayBufferMessage = (ws, msg) => {
+  sendToOthers(ws, msg)
 }
 
 // 移除断开链接的用户
@@ -40,6 +88,11 @@ const removeOffLine = (ws, code) => {
     clients.splice(index, 1)
     sendToAll({ type: 'users', data: clients.map(client => client.user) })
   }
+}
+
+const getClientById = (id) => {
+  const client = clients.find(client => client.user.id === id)
+  return client || null
 }
 
 // 一个新的websocket链接被建立
