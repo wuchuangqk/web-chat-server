@@ -6,7 +6,7 @@ const wsRouter = express.Router()
 expressWs(wsRouter);  // 增强expree路由，使其具有ws的能力
 const clients = []
 let seed = 0
-const colors = ['bg-purple-600', 'bg-fuchsia-600', 'bg-pink-600', 'bg-violet-600', 'bg-sky-600', 'bg-teal-600', 'bg-yellow-600', 'bg-red-600'] // 颜色轮盘
+// const colors = ['bg-purple-600', 'bg-fuchsia-600', 'bg-pink-600', 'bg-violet-600', 'bg-sky-600', 'bg-teal-600', 'bg-yellow-600', 'bg-red-600'] // 颜色轮盘
 
 // 给所有人发消息
 const sendToAll = (data) => {
@@ -22,16 +22,7 @@ const sendToOthers = (self, data) => {
 }
 
 const handleMessage = (ws, msg) => {
-  // console.log('ws message:', msg, typeof msg);
-  if (typeof msg === 'object') {
-    arrayBufferMessage(ws, msg)
-  } else if (typeof msg === 'string') {
-    textMessage(ws, msg)
-  }
-}
-
-const textMessage = (ws, msg) => {
-  const { type, data } = JSON.parse(msg)
+  const { type, data, user } = JSON.parse(msg)
   switch (type) {
     case 'message':
       sendToOthers(ws, msg)
@@ -43,6 +34,12 @@ const textMessage = (ws, msg) => {
     // 接收方回应
     case 'answer':
       onAnswer(data)
+      break
+    case 'update-user':
+      const client = getClientById(user.id)
+      client.user.name = user.name
+      client.user.type = user.type
+      sendToAll({ type: 'users', data: clients.map(client => client.user) })
       break
   }
 }
@@ -75,10 +72,6 @@ const onAnswer = (_data) => {
   }))
 }
 
-const arrayBufferMessage = (ws, msg) => {
-  sendToOthers(ws, msg)
-}
-
 // 移除断开链接的用户
 const removeOffLine = (ws, code) => {
   console.log('ws close:', code);
@@ -97,13 +90,14 @@ const getClientById = (id) => {
 
 // 一个新的websocket链接被建立
 wsRouter.ws('/', (ws, req) => {
+  const { name, type } = req.query
   seed++
   clients.push({
     ws,
     user: {
       id: seed,
-      name: `用户${seed}`,
-      color: arrayRandom(colors)
+      name,
+      type
     },
   })
   sendToAll({ type: 'users', data: clients.map(client => client.user) })
