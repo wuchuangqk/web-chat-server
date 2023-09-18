@@ -10,11 +10,7 @@ node src/main.js
 ```
 # 预览
 ## PC端
-![](https://github.com/wuchuangqk/readme-img/blob/master/Snipaste_2023-09-18_16-39-03.png)
-![](https://github.com/wuchuangqk/readme-img/blob/master/Snipaste_2023-09-18_16-41-55.png)
-![](https://github.com/wuchuangqk/readme-img/blob/master/Snipaste_2023-09-18_16-42-01.png)
-![](https://github.com/wuchuangqk/readme-img/blob/master/Snipaste_2023-09-18_16-42-21.png)
+![](https://github.com/wuchuangqk/readme-img/blob/master/PC端1.jpg)
+![](https://github.com/wuchuangqk/readme-img/blob/master/PC端2.jpg)
 ## 移动端
-![](https://github.com/wuchuangqk/readme-img/blob/master/51692C72-EDAC-4DD4-9CC1-F349AD866ACC.jpg)
-![](https://github.com/wuchuangqk/readme-img/blob/master/2446CF8E-4510-4EF3-A564-332A808BEFF4.jpg)
-![](https://github.com/wuchuangqk/readme-img/blob/master/CF474779-B233-4D30-AF0D-2998B8E5BCAF.jpg)
+![](https://github.com/wuchuangqk/readme-img/blob/master/移动端.jpg)
