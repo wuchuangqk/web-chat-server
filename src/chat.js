@@ -29,7 +29,7 @@ const handleMessage = (ws, msg) => {
       break
     // 发送方握手
     case 'offer':
-      onOffer(data)
+      onOffer(data, user)
       break
     // 接收方回应
     case 'answer':
@@ -45,8 +45,7 @@ const handleMessage = (ws, msg) => {
 }
 
 // 发送方通知接收方
-const onOffer = (_data) => {
-  const { data, user } = _data
+const onOffer = (data, user) => {
   const receiveClient = getClientById(data.receive)
   if (!receiveClient) return
   receiveClient.ws.send(JSON.stringify({
@@ -60,8 +59,7 @@ const onOffer = (_data) => {
 
 // 接收方回应发送方
 // 让对方接收自己的answer
-const onAnswer = (_data) => {
-  const { data } = _data
+const onAnswer = (data) => {
   const senderClient = getClientById(data.sender)
   if (!senderClient) return
   senderClient.ws.send(JSON.stringify({
