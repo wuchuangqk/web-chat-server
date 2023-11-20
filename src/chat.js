@@ -72,10 +72,10 @@ const onAnswer = (data) => {
 
 // 移除断开链接的用户
 const removeOffLine = (ws, code) => {
-  console.log('ws close:', code);
   // 移除链接
   const index = clients.findIndex(client => client.ws === ws)
   if (index !== -1) {
+    console.log('ws close:', clients[index].user.name);
     clients.splice(index, 1)
     sendToAll({ type: 'users', data: clients.map(client => client.user) })
   }
